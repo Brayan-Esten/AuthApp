@@ -19,14 +19,14 @@ class AuthController extends Controller
     public function handleCallback($provider){
 
         try{
-            $githubUser = Socialite::driver($provider)->user();
+            $providerUser = Socialite::driver($provider)->user();
         }
         catch(Exception $e){
             return redirect('/login');
         }
 
         $user = User::where([
-            'provider_id' => $githubUser->getId(),
+            'provider_id' => $providerUser->getId(),
             'provider' => $provider
         ])->first();
 
@@ -34,7 +34,7 @@ class AuthController extends Controller
         if(!$user){
 
             $validate = Validator::make(
-                ['email' => $githubUser->getEmail()],
+                ['email' => $providerUser->getEmail()],
                 ['email' => ['unique:users,email']],
                 ['email.unique' => 'Could not login. Maybe you used a different login method ?']
             );
@@ -44,9 +44,9 @@ class AuthController extends Controller
             }
 
             $user = User::create([
-                'name' => $githubUser->getName(),
-                'email' => $githubUser->getEmail(),
-                'provider_id' => $githubUser->getId(),
+                'name' => $providerUser->getName(),
+                'email' => $providerUser->getEmail(),
+                'provider_id' => $providerUser->getId(),
                 'provider' => $provider,
                 'email_verified_at' => now()
             ]);
