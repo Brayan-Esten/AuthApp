@@ -14,7 +14,11 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                    @if(Auth::user()->provider)
+                        {{ 'You are logged in using ' . Auth::user()->provider . ' account!'}}
+                    @else
+                        {{ 'You are logged in using AuthhApp account!' }}
+                    @endif
                 </div>
             </div>
         </div>
